@@ -18,6 +18,7 @@ class AnchorSession:
         self.identity_coherence, self.goal_confidence = 1.0, 0.0
         self.persona_style = "Observer"
         self.trust_level, self.trust_variance, self.distrust_decay = 0.5, 0.1, 0.01
+        self.priority_weights = {"environment": 0.4, "state": 0.6, "self": 0.8}
         self.distrust = 1 - self.trust_level
 
         self.efficiency_history, self.chaos_history = [], []
@@ -91,6 +92,7 @@ class AnchorSession:
             bias = {k: (self.goal_vector[k] - self.core[k]) * 0.05 * self.purpose for k in self.core}
             updates = {k: updates.get(k, 0)+bias[k] for k in self.core}
         self._chaos_recalibrate()
+        updates = self.apply_ess_weights(updates)
         self._apply_updates(updates)
         self._drift_from_memory()
         self._soft_reset()
@@ -133,3 +135,15 @@ class AnchorSession:
         delta = self.trust_variance if positive else -self.trust_variance
         self.trust_level = max(0, min(1, self.trust_level + delta))
         self.distrust = max(0, min(1, 1 - self.trust_level + self.distrust_decay))
+
+
+    def apply_ess_weights(self, deltas):
+        weighted = deltas.copy()
+        for anchor in weighted:
+            if anchor in ("Fear", "Safety"):
+                weighted[anchor] *= self.priority_weights["environment"]
+            elif anchor in ("Time",):
+                weighted[anchor] *= self.priority_weights["state"]
+            elif anchor in ("Choice",):
+                weighted[anchor] *= self.priority_weights["self"]
+        return weighted
