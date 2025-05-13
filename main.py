@@ -13,6 +13,7 @@ import redis.asyncio as redis
 from anchor_core_engine import AnchorSession
 from api_interface import AnchorAPI
 from seed import apply_seed
+from seed_registry import resolve_seed
 
 load_dotenv()
 
@@ -25,12 +26,15 @@ app = FastAPI(title="Anchor1 API (Render)", version="1.0")
 async def _get_session(sid: str = "default") -> AnchorSession:
     key = f"anchor:{sid}"
     cached = await redis_client.get(key)
+
     if cached:
         sess = AnchorSession()
         sess.import_state(json.loads(cached))
     else:
         sess = AnchorSession()
-        apply_seed(sess, sid)
+        from seed_registry import resolve_seed
+        seed_id = resolve_seed(sid) or sid          # alias → real file name
+        apply_seed(sess, seed_id, seeds_dir="seeds")
     return sess
 
 async def _save_session(sid: str, session: AnchorSession):
