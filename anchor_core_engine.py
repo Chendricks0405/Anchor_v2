@@ -56,6 +56,31 @@ class AnchorSession:
 
         self.identity_coherence = max(0.0, min(1.0, 1 - avg_drift))
         return self.identity_coherence
+    
+    # ------------------------------------------------------------------
+    #  Persistence helpers  
+    # ------------------------------------------------------------------
+    def export_state(self) -> dict:
+        """Return a JSON-serialisable snapshot of the session."""
+        return {
+            "core": self.core,
+            "goal_vector": self.goal_vector,
+            "ticks": self.ticks,
+            "identity_coherence": getattr(self, "identity_coherence", None),
+            "goal_confidence":  getattr(self, "goal_confidence",  None),
+            "memory_orbit":     getattr(self, "memory_orbit",     []),
+            "behavior_log":     self.behavior_log,
+        }
+
+    def import_state(self, state: dict):
+        """Rehydrate a session from a snapshot produced by export_state()."""
+        self.core            = state.get("core",            self.core)
+        self.goal_vector     = state.get("goal_vector",     self.goal_vector)
+        self.ticks           = state.get("ticks",           0)
+        self.identity_coherence = state.get("identity_coherence", 1.0)
+        self.goal_confidence    = state.get("goal_confidence",    0.0)
+        self.memory_orbit       = state.get("memory_orbit",       [])
+        self.behavior_log       = state.get("behavior_log",       [])
 
     def _adaptive_corr(self):
         win = min(50, len(self.efficiency_history)) if len(self.efficiency_history) > 20 else len(self.efficiency_history)

@@ -1,70 +1,80 @@
-"""
-bridge_utils.py
 
-Bridge utilities for AnchorSession:
-- load_memory, initialize_anchor1_memory
-- parse_input, apply_anchor_deltas, trigger_memory
-- get_anchor_state, bridge_input
 """
-import json
-import uuid
-import re
+bridge_utils.py  — patched 2025‑05‑13
+------------------------------------------------
+• Fix infinite recursion in `conditional_anchor_response`
+• Return full state via `get_anchor_state` on chaos / diagnostic
+• Correct key name `memory_nodes`
+• Minor typing & docstrings
+"""
 
-def load_memory(file_path: str):
-    """Load memory data from a JSON file."""
-    with open(file_path, 'r') as f:
+import json, uuid, re
+from typing import Dict, Any, List
+
+# ---------- Memory helpers -------------------------------------------------
+def load_memory(file_path: str) -> List[dict]:
+    """Load memory nodes from *file_path*."""
+    with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def initialize_anchor1_memory(session, memory_data):
-    """Initialize session memory orbit from data."""
+def initialize_anchor1_memory(session, memory_data: List[dict]) -> None:
+    """Replace *session.memory_orbit* with *memory_data*."""
     session.memory_orbit = memory_data
 
-def parse_input(input_data: str) -> dict:
-    response = {
-        "anchor_deltas": {"Fear": 0.0, "Safety": 0.0, "Time": 0.0, "Choice": 0.0},
+# ---------- Input parsing ---------------------------------------------------
+def parse_input(input_data: str) -> Dict[str, Any]:
+    """Extract anchor deltas, memory triggers, and ripple tags from *input_data*."""
+    result = {
+        "anchor_deltas": {k: 0.0 for k in ("Fear", "Safety", "Time", "Choice")},
         "memory_trigger": None,
         "log": [],
-        "ripple_tags": {}
+        "ripple_tags": {},
     }
-    lower = input_data.lower()
-    # Instability/Stability quick cues
-    for match in re.findall(r"instability *([+\-]\d*\.?\d+)", lower):
-        delta = float(match)
-        response["anchor_deltas"]["Fear"] += delta
-        response["log"].append(f"Instability cue: Fear {delta:+}")
-    for match in re.findall(r"stability *([+\-]\d*\.?\d+)", lower):
-        delta = float(match)
-        response["anchor_deltas"]["Safety"] += delta
-        response["log"].append(f"Stability cue: Safety {delta:+}")
-    # Simple triggers
-    if "loud noise" in lower:
-        response["anchor_deltas"]["Fear"] += 0.2
-        response["anchor_deltas"]["Safety"] -= 0.1
-        response["log"].append("External event: Loud noise")
-        response["ripple_tags"]["loud_noise"] = 0.2
-    elif "encouragement" in lower:
-        response["anchor_deltas"]["Safety"] += 0.2
-        response["anchor_deltas"]["Fear"] -= 0.1
-        response["log"].append("Social ripple: Encouragement")
-        response["ripple_tags"]["encouragement"] = 0.2
-    elif "the cave" in lower:
-        response["memory_trigger"] = "The Cave"
-        response["log"].append("Memory trigger: The Cave")
-        response["ripple_tags"]["memory_cave"] = 0.3
-    return response
+    text = input_data.lower()
 
+    # Explicit anchor nudges e.g. "instability +0.2"
+    for match in re.findall(r"instability *([+\-]\d*\.?\d+)", text):
+        delta = float(match)
+        result["anchor_deltas"]["Fear"] += delta
+        result["log"].append(f"Instability cue: Fear {delta:+}")
+
+    for match in re.findall(r"stability *([+\-]\d*\.?\d+)", text):
+        delta = float(match)
+        result["anchor_deltas"]["Safety"] += delta
+        result["log"].append(f"Stability cue: Safety {delta:+}")
+
+    # Simple semantic triggers
+    if "loud noise" in text:
+        result["anchor_deltas"]["Fear"] += 0.2
+        result["anchor_deltas"]["Safety"] -= 0.1
+        result["log"].append("External event: Loud noise")
+        result["ripple_tags"]["loud_noise"] = 0.2
+    elif "encouragement" in text:
+        result["anchor_deltas"]["Safety"] += 0.2
+        result["anchor_deltas"]["Fear"] -= 0.1
+        result["log"].append("Social ripple: Encouragement")
+        result["ripple_tags"]["encouragement"] = 0.2
+    elif "the cave" in text:
+        result["memory_trigger"] = "The Cave"
+        result["log"].append("Memory trigger: The Cave")
+        result["ripple_tags"]["memory_cave"] = 0.3
+
+    return result
+
+# ---------- Anchor helpers --------------------------------------------------
 def apply_anchor_deltas(core: dict, deltas: dict, ripple_tags: dict, session):
-    # Pre-weight deltas by ripple severity
+    """Apply *deltas* to *core*, modulated by *ripple_tags*."""
     for tag, mag in ripple_tags.items():
         session.ripple_tags[tag] = mag
         for k in deltas:
             deltas[k] *= (1 + mag)
-    # Apply clamped adjustments
+
     for k, v in deltas.items():
         if k in core:
             core[k] = max(0.0, min(1.0, core[k] + v))
 
 def trigger_memory(memory_orbit: list, memory_id: str) -> list:
+    """Promote matching *memory_id* nodes to tier='active'."""
     triggered = []
     for mem in memory_orbit:
         if mem.get("id") == memory_id:
@@ -73,43 +83,55 @@ def trigger_memory(memory_orbit: list, memory_id: str) -> list:
             triggered.append(mem)
     return triggered
 
-def get_anchor_state(session) -> dict:
+# ---------- State serialization ---------------------------------------------
+def get_anchor_state(session) -> Dict[str, Any]:
+    """Return full session snapshot suitable for external diagnostics."""
     state = session.export_state()
     state.update({
         "id": str(uuid.uuid4()),
         "tick": session.ticks,
-        "last_behavior": session.behavior_log[-1] if session.behavior_log else None, "memroy_nodes": session.memory_orbit #alias for CustomGPT
+        "last_behavior": session.behavior_log[-1] if session.behavior_log else None,
+        "memory_nodes": session.memory_orbit,  # corrected key
     })
     return state
 
-def bridge_input(session, input_data: str) -> dict:
+# ---------- Bridge I/O ------------------------------------------------------
+def bridge_input(session, input_data: str) -> Dict[str, Any]:
     parsed = parse_input(input_data)
-    # Identity calibration
+
+    # Identity calibration bookkeeping
     if parsed["memory_trigger"]:
         session.memory_driven += 1
     else:
         session.environment_driven += 1
-    # Apply deltas
+
+    # Apply perception deltas
     apply_anchor_deltas(session.core, parsed["anchor_deltas"], parsed["ripple_tags"], session)
+
     # Memory trigger
-    triggered = []
     if parsed["memory_trigger"]:
-        triggered = trigger_memory(session.memory_orbit, parsed["memory_trigger"])
-    # Advance session
+        trigger_memory(session.memory_orbit, parsed["memory_trigger"])
+
+    # Advance simulation
     session.tick(parsed["anchor_deltas"])
-    # Log entry
-    entry = f"[Bridge] Input: {input_data} -> {'; '.join(parsed['log'])}"
-    if triggered:
-        entry += f" | Memory: {', '.join([m['id'] for m in triggered])}"
+
+    # Behaviour log
+    entry = f"[Bridge] Input: {input_data} -> {'; '.join(parsed['log']) or 'no cues'}"
     session.behavior_log.append(entry)
+
     return conditional_anchor_response(session, input_data)
 
-def conditional_anchor_response(session, input_text: str) -> dict:
-    """Return perceptual summary unless chaos or diagnostic trigger is found."""
-    if session.is_in_chaos() or "diagnose" in input_text.lower() or "reveal state" in input_text.lower():
-        return conditional_anchor_response(session, input_data)
+def conditional_anchor_response(session, input_text: str) -> Dict[str, Any]:
+    """Return either minimal or full state depending on chaos/diagnostics."""
+    diagnostics = ("diagnose" in input_text.lower() or
+                   "reveal state" in input_text.lower() or
+                   session.is_in_chaos())
+
+    if diagnostics:
+        return get_anchor_state(session)
+
     return {
         "status": "stable",
         "tick": session.ticks,
-        "last_behavior": session.behavior_log[-1] if session.behavior_log else None
+        "last_behavior": session.behavior_log[-1] if session.behavior_log else None,
     }
