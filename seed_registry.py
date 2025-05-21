@@ -7,7 +7,7 @@ Utility functions for loading seed aliases → seed_id.
 Usage:
     from seed_registry import resolve_seed
 
-    seed_id = resolve_seed("therapist")  # → "Therapist_Seed_v1"
+    seed_id = resolve_seed("therapist")  # → "Therapist_Seed_v2"
     seed_id = resolve_seed("Scientist")  # case‑insensitive
 
 The registry is stored as JSON: seeds/seed_registry.json.
