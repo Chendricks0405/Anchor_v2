@@ -159,18 +159,18 @@ class AnchorSession:
 
     def export_view(self) -> dict:
     """Human-readable diagnostic view (used by get_anchor_state)."""
-    vec = self.core.copy()
-    vec["Instability"] = vec.pop("Fear")
-    vec["Stability"]   = vec.pop("Safety")
-    return {
-        "tick": self.ticks,
-        "anchor_vector": vec,
-        "curiosity_level": self.curiosity,
-        "identity_coherence": self.identity_coherence,
-        "goal_confidence": self.goal_confidence,
-        "persona_style": self.persona_style,
-        "collapse_vector": self.describe_collapse_vector(),
-        "in_chaos": self.is_in_chaos(),
+        vec = self.core.copy()
+        vec["Instability"] = vec.pop("Fear")
+        vec["Stability"]   = vec.pop("Safety")
+        return {
+            "tick": self.ticks,
+            "anchor_vector": vec,
+            "curiosity_level": self.curiosity,
+            "identity_coherence": self.identity_coherence,
+            "goal_confidence": self.goal_confidence,
+            "persona_style": self.persona_style,
+            "collapse_vector": self.describe_collapse_vector(),
+            "in_chaos": self.is_in_chaos(),
     }
     
        
