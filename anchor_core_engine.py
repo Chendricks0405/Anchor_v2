@@ -158,7 +158,7 @@ class AnchorSession:
         return "Neutral – drifting"
 
     def export_view(self) -> dict:
-    """Human-readable diagnostic view (used by get_anchor_state)."""
+        """Human-readable diagnostic view (used by get_anchor_state)."""
         vec = self.core.copy()
         vec["Instability"] = vec.pop("Fear")
         vec["Stability"]   = vec.pop("Safety")
