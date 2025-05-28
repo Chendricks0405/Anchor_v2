@@ -1,8 +1,8 @@
 {
-  "therapist": "Therapist_Seed_v2",
-  "friend": "Friend_ResearchPartner_v1",
-  "research_partner": "Friend_ResearchPartner_v1",
-  "scientist": "Scientist_Seed_v1",
-  "skeptic": "Skeptic_Seed_v1",
-  "creative_artist": "CreativeArtist_Seed_v1"
+  "therapist": "Therapist_Seed",
+  "friend": "Friend_ResearchPartner",
+  "research_partner": "Friend_ResearchPartner",
+  "scientist": "Scientist_Seed",
+  "skeptic": "Skeptic_Seed",
+  "creative_artist": "CreativeArtist_Seed"
 }
