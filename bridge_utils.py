@@ -9,7 +9,10 @@ bridge_utils.py – patched 2025-05-25
 • Keeps existing helper functions intact
 """
 
-import re, json, uuid
+import re
+import json
+import uuid
+import os                       # ← added for resolve_memory_node
 from typing import Dict, Any
 from anchor_core_engine import AnchorSession
 
@@ -30,6 +33,41 @@ def initialize_anchor1_memory(session: AnchorSession, memory_data):
     for node in memory_data:
         if isinstance(node, dict) and node.get("id") not in existing_ids:
             session.memory_orbit.append(node)
+
+# ---------- Lazy node-loader (NEW) ------------------------------------
+#
+# Usage:
+#     node = resolve_memory_node(session, "CA001")
+#     linked = [resolve_memory_node(session, nid) for nid in node.get("linked_nodes",[])]
+#
+import os
+
+def resolve_memory_node(session: AnchorSession, node_id: str):
+    """
+    Lazy-load a single memory node by ID.
+    Cluster file = '<prefix>_cluster.json' where prefix = first 2 chars of node_id.
+    Caches anything already fetched in session.memory_cache (dict[str, dict]).
+    """
+    # 0. Prep cache
+    if not hasattr(session, "memory_cache"):
+        session.memory_cache = {}
+
+    if node_id in session.memory_cache:           # fast path
+        return session.memory_cache[node_id]
+
+    # 1. Derive cluster filename (CA → CA_cluster.json, GM → GM_cluster.json, …)
+    cluster_file = f"{node_id[:2]}_cluster.json"
+    cluster_path = os.path.join("memory", cluster_file)
+
+    # 2. Load & search cluster
+    if os.path.exists(cluster_path):
+        for node in load_memory(cluster_path):
+            if node.get("id") == node_id:
+                session.memory_cache[node_id] = node        # cache hit
+                return node
+
+    # 3. Fallback – not found
+    return None
 
 # ---------- State serialisation -------------------------------------------
 def get_anchor_state(session: AnchorSession) -> Dict[str, Any]:

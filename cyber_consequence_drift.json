@@ -1,0 +1,86 @@
+{
+  "Source Co De Online": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Isbn": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Contents": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Ac K": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  },
+  "Arpanet": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  },
+  "Blob": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Bind": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Bi O S": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "U Sd R": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  },
+  "Charg E N": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Circ": {
+    "Fear": 0.0,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  },
+  "Xs S": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  },
+  "Ne O": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.0
+  },
+  "Us B": {
+    "Fear": 0.4,
+    "Safety": 0.0,
+    "Time": 0.0,
+    "Choice": 0.1
+  }
+}
