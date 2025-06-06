@@ -4,6 +4,7 @@ anchor_core_engine_v6.py
 Anchor v6 — Core Engine with Drift-Weighted Perception and Speech Gating
 """
 import math, random, json
+from typing import Dict, Any
 
 class AnchorSession:
     def __init__(self):
@@ -71,6 +72,33 @@ class AnchorSession:
             "memory_orbit":     getattr(self, "memory_orbit",     []),
             "behavior_log":     self.behavior_log,
         }
+
+
+def export_view(self) -> Dict[str, Any]:
+    """Human-readable diagnostic view (used by get_anchor_state)."""
+    # --- core vector aliasing ---
+    vec = self.core.copy()
+    vec["Instability"] = vec.pop("Fear", vec.get("Instability", 0.0))
+    vec["Stability"]   = vec.pop("Safety", vec.get("Stability", 0.0))
+
+    # --- personality vector ---
+    personality = (
+        getattr(self, "personality_vector", None)
+        or getattr(self, "anchor_weights", None)
+        or None
+    )
+
+    return {
+        "tick": self.ticks,
+        "anchor_vector": vec,
+        "curiosity_level": getattr(self, "curiosity", None),
+        "identity_coherence": getattr(self, "identity_coherence", None),
+        "goal_confidence": getattr(self, "goal_confidence", None),
+        "persona_style": getattr(self, "persona_style", None),
+        "collapse_vector": self.describe_collapse_vector(),
+        "in_chaos": self.is_in_chaos(),
+        "personality_vector": personality,
+    }
 
     def import_state(self, state: dict):
         """Rehydrate a session from a snapshot produced by export_state()."""
@@ -157,23 +185,6 @@ class AnchorSession:
             return "Impact ready – decision imminent"
         return "Neutral – drifting"
 
-    def export_view(self) -> dict:
-        """Human-readable diagnostic view (used by get_anchor_state)."""
-        vec = self.core.copy()
-        vec["Instability"] = vec.pop("Fear")
-        vec["Stability"]   = vec.pop("Safety")
-        return {
-            "tick": self.ticks,
-            "anchor_vector": vec,
-            "curiosity_level": self.curiosity,
-            "identity_coherence": self.identity_coherence,
-            "goal_confidence": self.goal_confidence,
-            "persona_style": self.persona_style,
-             "collapse_vector": self.describe_collapse_vector(),
-            "in_chaos": self.is_in_chaos(),
-           }
-    
-       
     def update_trust_level(self, positive=True):
         delta = self.trust_variance if positive else -self.trust_variance
         self.trust_level = max(0, min(1, self.trust_level + delta))
