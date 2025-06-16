@@ -1,0 +1,60 @@
+json
+
+{
+  "Source Co De Online": {"Instability": 0.0, "Stability": 0.0, "Time": 0.0, "Choice": 0.0},
+  "Isbn": {"Instability": 0.0, "Stability": 0.0, "Time": 0.0, "Choice": 0.0},
+  "Contents": {"Instability": 0.0, "Stability": 0.0, "Time": 0.0, "Choice": 0.0},
+  
+  // Network Infrastructure
+  "Ac K": {"Instability": 0.4, "Stability": 0.0, "Time": 0.0, "Choice": 0.1},
+  "Arpanet": {"Instability": 0.4, "Stability": 0.0, "Time": 0.0, "Choice": 0.1},
+  "Bind": {"Instability": 0.3, "Stability": 0.0, "Time": 0.1, "Choice": 0.1},
+  "DNS": {"Instability": 0.5, "Stability": 0.0, "Time": 0.2, "Choice": 0.2},
+  "DHCP": {"Instability": 0.3, "Stability": 0.0, "Time": 0.1, "Choice": 0.1},
+  
+  // System Components
+  "Bi O S": {"Instability": 0.6, "Stability": 0.0, "Time": 0.1, "Choice": 0.1},
+  "Firmware": {"Instability": 0.7, "Stability": 0.0, "Time": 0.1, "Choice": 0.2},
+  "Bootloader": {"Instability": 0.8, "Stability": 0.0, "Time": 0.2, "Choice": 0.2},
+  "Kernel": {"Instability": 0.7, "Stability": 0.0, "Time": 0.2, "Choice": 0.2},
+  
+  // Attack Vectors
+  "Xs S": {"Instability": 0.6, "Stability": 0.0, "Time": 0.1, "Choice": 0.2},
+  "SQL Injection": {"Instability": 0.8, "Stability": 0.0, "Time": 0.2, "Choice": 0.3},
+  "Buffer Overflow": {"Instability": 0.9, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Zero Day": {"Instability": 0.95, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "Privilege Escalation": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  
+  // Malware Families
+  "Ransomware": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "Trojan": {"Instability": 0.7, "Stability": 0.0, "Time": 0.2, "Choice": 0.3},
+  "Rootkit": {"Instability": 0.8, "Stability": 0.0, "Time": 0.2, "Choice": 0.3},
+  "Backdoor": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Keylogger": {"Instability": 0.6, "Stability": 0.0, "Time": 0.2, "Choice": 0.2},
+  "Botnet": {"Instability": 0.7, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  
+  // APT Groups
+  "APT28": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "APT29": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "Lazarus": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "FIN7": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  
+  // Attack Techniques (MITRE ATT&CK)
+  "Lateral Movement": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Persistence": {"Instability": 0.7, "Stability": 0.0, "Time": 0.2, "Choice": 0.3},
+  "Exfiltration": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "Command Control": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Credential Dumping": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  
+  // Business Impact Terms
+  "Compliance Violation": {"Instability": 0.7, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Data Breach": {"Instability": 0.9, "Stability": 0.0, "Time": 0.4, "Choice": 0.4},
+  "Business Disruption": {"Instability": 0.8, "Stability": 0.0, "Time": 0.4, "Choice": 0.3},
+  "Reputation Damage": {"Instability": 0.6, "Stability": 0.0, "Time": 0.2, "Choice": 0.2},
+  
+  // Hardware/Physical
+  "Us B": {"Instability": 0.5, "Stability": 0.0, "Time": 0.1, "Choice": 0.2},
+  "Physical Access": {"Instability": 0.8, "Stability": 0.0, "Time": 0.3, "Choice": 0.3},
+  "Badge Clone": {"Instability": 0.7, "Stability": 0.0, "Time": 0.2, "Choice": 0.3},
+  "Tailgating": {"Instability": 0.5, "Stability": 0.0, "Time": 0.1, "Choice": 0.2}
+}
