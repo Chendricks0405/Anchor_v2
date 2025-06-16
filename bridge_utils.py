@@ -128,6 +128,7 @@ def conditional_anchor_response(session: AnchorSession, input_text: str) -> Dict
             "dump raw vector",
             "personality vector",
             "persona vector",
+            "handoff log"
         )
     )
     show_diag = session.is_in_chaos() or diagnostics_requested  # type: ignore[attr-defined]
