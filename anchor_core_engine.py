@@ -3,13 +3,17 @@ anchor_core_engine_v6.py
 
 Anchor v6 — Core Engine with Drift-Weighted Perception and Speech Gating
 """
-import math, random, json
+import math, random, json, importlib
 from typing import Dict, Any
 
 class AnchorSession:
-    def __init__(self):
+    def __init__(self, persona: str = None):
         self.core = {"Fear": 0.5, "Safety": 0.5, "Time": 0.5, "Choice": 0.5}
         self.goal_vector = {"Fear": 0.2, "Safety": 0.8, "Time": 0.4, "Choice": 0.6}
+
+# Plugin loader & per-session scheduler
+self.plugin = self._load_plugin(persona)
+self.scheduler = _MiniScheduler()
         self.memory_orbit, self.behavior_log, self.container = [], [], {}
         self.focus, self.goal = None, None
         self.ticks, self.ego_resistance = 0, 0.5
@@ -44,7 +48,19 @@ class AnchorSession:
         self.goal_confidence = dot / max(1e-6, mag)
     
     
-    # ---------- Identity coherence ------------------------------------
+    
+# ---------- Plug-in loader ---------------------------------------
+def _load_plugin(self, name):
+    """Import plugins.<persona>.plugin if available, else null object."""
+    if not name:
+        return object()
+    try:
+        mod = importlib.import_module(f"plugins.{name}.plugin")
+        return mod.Plugin()
+    except ModuleNotFoundError:
+        return object()
+# -----------------------------------------------------------------
+# ---------- Identity coherence ------------------------------------
     def get_identity_coherence(self) -> float:
         """
         Coherence = 1 − average absolute drift between current perception
@@ -164,6 +180,8 @@ def export_view(self) -> Dict[str, Any]:
         self._apply_updates(updates)
         self._drift_from_memory()
         self._soft_reset()
+        if hasattr(self, "scheduler"):
+            self.scheduler.tick()
         self.ticks += 1
 
         if self.get_identity_coherence() < 0.4:
