@@ -121,6 +121,29 @@ def _generate_reply(session: AnchorSession, user_text: str) -> str:
 def conditional_anchor_response(session: AnchorSession, input_text: str) -> Dict[str, Any]:
     """Return either a natural reply or diagnostics depending on chaos/keywords."""
     lower_txt = input_text.lower()
+    # --------------- diagnostics gate -----------------
+    diagnostics_requested = (
+        lower_txt.startswith("::diag") or
+        any(
+            kw in lower_txt
+            for kw in (
+                "diagnose",
+                "reveal state",
+                "dump raw vector",
+                "personality vector",
+                "persona vector",
+                "handoff log",
+                "chaos response",
+            )
+        )
+    )
+    # strip meta-prefix before forwarding to the engine
+    if lower_txt.startswith("::diag"):
+        input_text = input_text[len("::diag"):].lstrip()
+        lower_txt = input_text.lower()
+
+    show_diag = session.is_in_chaos() or diagnostics_requested
+    # --------------------------------------------------
     
 diagnostics_requested = (
         lower_txt.startswith("::diag") or
