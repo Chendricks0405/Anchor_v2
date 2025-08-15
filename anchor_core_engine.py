@@ -12,8 +12,8 @@ class AnchorSession:
         self.goal_vector = {"Fear": 0.2, "Safety": 0.8, "Time": 0.4, "Choice": 0.6}
 
 # Plugin loader & per-session scheduler
-self.plugin = self._load_plugin(persona)
-self.scheduler = _MiniScheduler()
+        self.plugin = self._load_plugin(persona)
+        self.scheduler = _MiniScheduler()
         self.memory_orbit, self.behavior_log, self.container = [], [], {}
         self.focus, self.goal = None, None
         self.ticks, self.ego_resistance = 0, 0.5
